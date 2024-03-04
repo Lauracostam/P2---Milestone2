@@ -1,0 +1,20 @@
+folha-2005-02-25.txt
+=========================
+=============================================EMPREGADOS================================================================
+=======================================================================================================================
+Nome                 Salario Bruto  Descontos  Salario Liquido  Metodo
+======================================================================
+Maite Proenca        1662,52        77,00        1585,52        correios
+Fernanda Montenegro  0,00           0,00         0,00           emMaos
+Paloma Duarte        258,75         0,00         258,75         banco
+Lavinia Vlasak       280,25         0,00         280,25         banco
+Claudia Abreu        275,00         0,00         268,00         emMaos
+Claudia Raia         250,00         88,40        161,60         banco
+Natalia do Valle     1000,00        0,00         1000,00        correios
+Regina Duarte        1100,00        0,00         1069,00        correios
+Flavia Alessandra    1200,00        0,00         1169,00        correios
+Deborah Secco        0,00           0,00         0,00           correios
+Ana Paula Arosio     1453,59        0,00         1453,59        correios
+
+================================================================================
+TOTAL                                           4180,10

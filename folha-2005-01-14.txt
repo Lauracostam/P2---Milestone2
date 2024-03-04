@@ -1,0 +1,20 @@
+folha-2005-01-14.txt
+=========================
+=============================================EMPREGADOS================================================================
+=======================================================================================================================
+Nome                 Salario Bruto  Descontos  Salario Liquido  Metodo
+======================================================================
+Maite Proenca        0,00           0,00         0,00           correios
+Fernanda Montenegro  0,00           0,00         0,00           emMaos
+Paloma Duarte        168,75         0,00         168,75         banco
+Lavinia Vlasak       201,78         0,00         201,78         banco
+Claudia Abreu        198,00         0,00         191,00         emMaos
+Claudia Raia         180,00         88,40        91,60          banco
+Natalia do Valle     0,00           0,00         0,00           correios
+Regina Duarte        0,00           0,00         0,00           correios
+Flavia Alessandra    0,00           0,00         0,00           correios
+Deborah Secco        0,00           0,00         0,00           correios
+Ana Paula Arosio     0,00           0,00         0,00           correios
+
+================================================================================
+TOTAL                                            748,53
