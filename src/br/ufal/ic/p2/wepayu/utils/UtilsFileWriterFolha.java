@@ -19,7 +19,7 @@ public class UtilsFileWriterFolha {
      */
 
     public static void criarPasta() {
-        String caminho = "./database";
+        String caminho = "./";
 
         File diretorio = new File(caminho);
 
@@ -37,7 +37,7 @@ public class UtilsFileWriterFolha {
 
     public static void escreverArquivo(String arquivo, String conteudo) {
         try{
-            File file = new File("./database/" + arquivo);
+            File file = new File("./" + arquivo);
             file.createNewFile();
 
             FileWriter fw = new FileWriter(file);
@@ -47,103 +47,92 @@ public class UtilsFileWriterFolha {
             bw.close();
             fw.close();
         } catch (IOException e) {
+        	System.out.println(e);
             System.out.println("Erro ao escrever o arquivo " + arquivo);
         }
     }
 
     
-    public static void salvarEmpregados(Map <String, Empregado> empregados) {
-        StringBuilder empregadosData = new StringBuilder();
+    public static void gerarFolha(Map <String, Empregado> empregados, String saida, String total) {
+        StringBuilder folha = new StringBuilder();
+        folha.append(saida).append("\n" + "=".repeat(25) + "\n" + "=".repeat(25) + "=".repeat(10))
+		.append("=".repeat(10) + "EMPREGADOS" + "=".repeat(64) + "\n" + "=".repeat(119) + "\n")
+		.append("Nome  " + " ".repeat(15) + "Salario Bruto  " + "Descontos  " + "Salario Liquido  " + "Metodo\n")
+		.append("=".repeat(70) + "\n");
         for (Empregado empregado : empregados.values()) {
-        	if(empregado instanceof Comissionado) {
-        		Comissionado empregado_ = (Comissionado) empregado;
-        		Map<String, String> vendas = empregado_.getVendas();
-        		ArrayList<String> vendas_lista = new ArrayList<String>();
-                for (Map.Entry<String, String> entry : vendas.entrySet()) {
-                	vendas_lista.add(entry.getKey() + "-" + entry.getValue());
-                }
-                Map<String, String> taxas = empregado.getTaxaServico();
-        		ArrayList<String> taxas_lista = new ArrayList<String>();
-                for (Map.Entry<String, String> entry : taxas.entrySet()) {
-                	taxas_lista.add(entry.getKey() + "-" + entry.getValue());
-                }
-        		empregadosData.append(empregado.getId()).append(":")
-                .append(empregado.getNome()).append(":")
-                .append(empregado.getSalario()).append(":")
-                .append(empregado.getSindicalizado()).append(":")
-                .append(empregado.getIdSindicato()).append(":")
-                .append(empregado.getTaxaSindical()).append(":")
-                .append(UtilsString.formatArrayList(taxas_lista)).append(":")
-                .append(empregado.getBanco()).append(":")
-                .append(empregado.getAgencia()).append(":")
-                .append(empregado.getContaCorrente()).append(":")
-                .append(empregado.getMetodoPagamento()).append(":")
-                .append(empregado_.getComissao()).append(":")
-                .append(UtilsString.formatArrayList(vendas_lista)).append(";");
-        	}
-        	else if(empregado instanceof Horista) {
-        		Horista empregado_ = (Horista) empregado;
-        		Map<String, String> cartao = empregado_.getCartao();
-        		ArrayList<String> cartao_lista = new ArrayList<String>();
-                for (Map.Entry<String, String> entry : cartao.entrySet()) {
-                	cartao_lista.add(entry.getKey() + "-" + entry.getValue());
-                }
-                Map<String, String> taxas = empregado.getTaxaServico();
-        		ArrayList<String> taxas_lista = new ArrayList<String>();
-                for (Map.Entry<String, String> entry : taxas.entrySet()) {
-                	taxas_lista.add(entry.getKey() + "-" + entry.getValue());
-                }
-        		empregadosData.append(empregado.getId()).append(":")
-                .append(empregado.getNome()).append(":")
-                .append(empregado.getEndereco()).append(":").append(empregado.getTipo())
-                .append(":").append(empregado.getSalario()).append(":")
-                .append(empregado.getSindicalizado()).append(":")
-                .append(empregado.getIdSindicato()).append(":")
-                .append(empregado.getTaxaSindical()).append(":")
-                .append(UtilsString.formatArrayList(taxas_lista)).append(":")
-                .append(empregado.getBanco()).append(":")
-                .append(empregado.getAgencia()).append(":")
-                .append(empregado.getContaCorrente()).append(":")
-                .append(empregado.getMetodoPagamento()).append(":")
-                .append(UtilsString.formatArrayList(cartao_lista)).append(";");
-        	}
-        	else {
-        		Map<String, String> taxas = empregado.getTaxaServico();
-        		ArrayList<String> taxas_lista = new ArrayList<String>();
-                for (Map.Entry<String, String> entry : taxas.entrySet()) {
-                	taxas_lista.add(entry.getKey() + "-" + entry.getValue());
-                }
-        		empregadosData.append(empregado.getId()).append(":")
-                .append(empregado.getNome()).append(":")
-                .append(empregado.getEndereco()).append(":").append(empregado.getTipo())
-                .append(":").append(empregado.getSalario()).append(":")
-                .append(empregado.getSindicalizado()).append(":")
-                .append(empregado.getIdSindicato()).append(":")
-                .append(empregado.getTaxaSindical()).append(":")
-                .append(UtilsString.formatArrayList(taxas_lista)).append(":")
-                .append(empregado.getBanco()).append(":")
-                .append(empregado.getAgencia()).append(":")
-                .append(empregado.getContaCorrente()).append(":")
-                .append(empregado.getMetodoPagamento()).append(";");
-        	}
-
+        	folha.append(empregado.getNome()).append(" ".repeat(Math.abs(empregado.getNome().length() - 21)))
+    		.append(String.format("%.2f",empregado.getPag_bruto()))
+    		.append(" ".repeat(Math.abs(String.format("%.2f",empregado.getPag_bruto()).length() - 15)))
+    		.append(String.format("%.2f",empregado.getDescontos()))
+    		.append(" ".repeat(Math.abs(String.format("%.2f",empregado.getDescontos()).length() - 13)))
+    		.append(String.format("%.2f",empregado.getPag_liq()))
+    		.append(" ".repeat(Math.abs(String.format("%.2f",empregado.getPag_liq()).length() - 15)))
+    		.append(empregado.getMetodoPagamento()).append("\n");
+//        	if(empregado instanceof Comissionado) {
+//        		Comissionado empregado_ = (Comissionado) empregado;
+//        		empregadosData.append(empregado.getId()).append(":")
+//                .append(empregado.getNome()).append(":")
+//                .append(empregado.getSalario()).append(":")
+//                .append(empregado.getSindicalizado()).append(":")
+//                .append(empregado.getIdSindicato()).append(":")
+//                .append(empregado.getTaxaSindical()).append(":")
+//                .append(UtilsString.formatArrayList(taxas_lista)).append(":")
+//                .append(empregado.getBanco()).append(":")
+//                .append(empregado.getAgencia()).append(":")
+//                .append(empregado.getContaCorrente()).append(":")
+//                .append(empregado.getMetodoPagamento()).append(":")
+//                .append(empregado_.getComissao()).append(":")
+//                .append(UtilsString.formatArrayList(vendas_lista)).append(";");
+//        	}
+//        	else if(empregado instanceof Horista) {
+//        		Horista empregado_ = (Horista) empregado;
+//        		Map<String, String> cartao = empregado_.getCartao();
+//        		ArrayList<String> cartao_lista = new ArrayList<String>();
+//                for (Map.Entry<String, String> entry : cartao.entrySet()) {
+//                	cartao_lista.add(entry.getKey() + "-" + entry.getValue());
+//                }
+//                Map<String, String> taxas = empregado.getTaxaServico();
+//        		ArrayList<String> taxas_lista = new ArrayList<String>();
+//                for (Map.Entry<String, String> entry : taxas.entrySet()) {
+//                	taxas_lista.add(entry.getKey() + "-" + entry.getValue());
+//                }
+//        		empregadosData.append(empregado.getId()).append(":")
+//                .append(empregado.getNome()).append(":")
+//                .append(empregado.getEndereco()).append(":").append(empregado.getTipo())
+//                .append(":").append(empregado.getSalario()).append(":")
+//                .append(empregado.getSindicalizado()).append(":")
+//                .append(empregado.getIdSindicato()).append(":")
+//                .append(empregado.getTaxaSindical()).append(":")
+//                .append(UtilsString.formatArrayList(taxas_lista)).append(":")
+//                .append(empregado.getBanco()).append(":")
+//                .append(empregado.getAgencia()).append(":")
+//                .append(empregado.getContaCorrente()).append(":")
+//                .append(empregado.getMetodoPagamento()).append(":")
+//                .append(UtilsString.formatArrayList(cartao_lista)).append(";");
+//        	}
+//        	else {
+//        		Map<String, String> taxas = empregado.getTaxaServico();
+//        		ArrayList<String> taxas_lista = new ArrayList<String>();
+//                for (Map.Entry<String, String> entry : taxas.entrySet()) {
+//                	taxas_lista.add(entry.getKey() + "-" + entry.getValue());
+//                }
+//        		empregadosData.append(empregado.getId()).append(":")
+//                .append(empregado.getNome()).append(":")
+//                .append(empregado.getEndereco()).append(":").append(empregado.getTipo())
+//                .append(":").append(empregado.getSalario()).append(":")
+//                .append(empregado.getSindicalizado()).append(":")
+//                .append(empregado.getIdSindicato()).append(":")
+//                .append(empregado.getTaxaSindical()).append(":")
+//                .append(UtilsString.formatArrayList(taxas_lista)).append(":")
+//                .append(empregado.getBanco()).append(":")
+//                .append(empregado.getAgencia()).append(":")
+//                .append(empregado.getContaCorrente()).append(":")
+//                .append(empregado.getMetodoPagamento()).append(";");
+//        	}
+//
         }
-
-        escreverArquivo("empregados.txt", empregadosData.toString());
-    }
-    
-    
-    
-    public static void persistirDados(Map <String, Empregado> empregados) {
-        salvarEmpregados(empregados);
-    }
-
-    public static void limparArquivos() throws IOException{
-    	File file = new File("./database/empregados.txt"); 
-    	if(file.delete()){
-    	    file.createNewFile();
-    	}else{
-    	    throw new IOException();
-    	}
-	  } 	  
+        folha.append("\n" + "=".repeat(80) + "\n").append("TOTAL" + " ".repeat(Math.abs(total.length() - 50)))
+        .append(total);
+        escreverArquivo(saida, folha.toString());
+    }	  
 }
