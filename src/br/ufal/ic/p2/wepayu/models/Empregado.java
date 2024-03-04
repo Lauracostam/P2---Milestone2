@@ -224,7 +224,7 @@ public class Empregado {
 		Date inicio = sdformat.parse(dataInicial);
 	    Date fim = sdformat.parse(dataFinal);
 	    Date dataAtual = null;
-		for (Map.Entry<String,String> itr : taxaServico.entrySet()) {
+		for (Map.Entry<String,String> itr : this.taxaServico.entrySet()) {
 			dataAtual = sdformat.parse(itr.getKey());
 			if(dataAtual.compareTo(inicio) >= 0 && dataAtual.compareTo(fim) < 0) {
 				taxa += Double.valueOf(itr.getValue().replace(",", "."));
