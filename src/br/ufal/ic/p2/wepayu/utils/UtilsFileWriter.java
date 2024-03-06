@@ -55,7 +55,7 @@ public class UtilsFileWriter {
     public static void salvarEmpregados(Map <String, Empregado> empregados) {
         StringBuilder empregadosData = new StringBuilder();
         for (Empregado empregado : empregados.values()) {
-        	if(empregado instanceof Comissionado) {
+        	if(empregado.getTipo().equals("comissionado")) {
         		Comissionado empregado_ = (Comissionado) empregado;
         		Map<String, String> vendas = empregado_.getVendas();
         		ArrayList<String> vendas_lista = new ArrayList<String>();
@@ -83,7 +83,7 @@ public class UtilsFileWriter {
                 .append(empregado_.getComissao()).append(":")
                 .append(UtilsString.formatArrayList(vendas_lista)).append(";");
         	}
-        	else if(empregado instanceof Horista) {
+        	else if(empregado.getTipo().equals("horista")) {
         		Horista empregado_ = (Horista) empregado;
         		Map<String, String> cartao = empregado_.getCartao();
         		ArrayList<String> cartao_lista = new ArrayList<String>();

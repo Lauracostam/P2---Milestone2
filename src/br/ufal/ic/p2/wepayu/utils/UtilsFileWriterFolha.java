@@ -53,21 +53,89 @@ public class UtilsFileWriterFolha {
     }
 
     
-    public static void gerarFolha(Map <String, Empregado> empregados, String saida, String total) {
+    public static void gerarFolha(Map <String, Empregado> empregados, Map <String, Empregado> horistas, String saida, String total, String data, double horasNormais, double horasExtras, double horasTotais) {
         StringBuilder folha = new StringBuilder();
-        folha.append(saida).append("\n" + "=".repeat(25) + "\n" + "=".repeat(25) + "=".repeat(10))
-		.append("=".repeat(10) + "EMPREGADOS" + "=".repeat(64) + "\n" + "=".repeat(119) + "\n")
-		.append("Nome  " + " ".repeat(15) + "Salario Bruto  " + "Descontos  " + "Salario Liquido  " + "Metodo\n")
-		.append("=".repeat(70) + "\n");
+        folha.append("FOLHA DE PAGAMENTO DO DIA")
+        .append("\n").append( "=".repeat(36) + "\n" + "\n")
+        .append("=".repeat(127) + "\n");
+        int i = 0, j = 0;
+        int qt_horistas = 0;
+        double pg_horistas = 0;
+        int qt_com = 0;
+        double pg_com = 0;
+        
+        for (Empregado emp : empregados.values()) {
+        	if(emp.getTipo().equals("horista")) {
+        		qt_horistas++;
+        		pg_horistas += emp.getPag_bruto();
+        	}
+        	if(emp.getTipo().equals("comissionado")) {
+        		qt_com++;
+        		pg_com += emp.getPag_bruto();
+        	}
+        	
+        }
         for (Empregado empregado : empregados.values()) {
-        	folha.append(empregado.getNome()).append(" ".repeat(Math.abs(empregado.getNome().length() - 21)))
-    		.append(String.format("%.2f",empregado.getPag_bruto()))
-    		.append(" ".repeat(Math.abs(String.format("%.2f",empregado.getPag_bruto()).length() - 15)))
-    		.append(String.format("%.2f",empregado.getDescontos()))
-    		.append(" ".repeat(Math.abs(String.format("%.2f",empregado.getDescontos()).length() - 13)))
-    		.append(String.format("%.2f",empregado.getPag_liq()))
-    		.append(" ".repeat(Math.abs(String.format("%.2f",empregado.getPag_liq()).length() - 15)))
-    		.append(empregado.getMetodoPagamento()).append("\n");
+        	if(empregado.getTipo().equals("horista")) {
+        		if(i == 0) {
+        			folha.append("=".repeat(21) + " " + "HORISTAS" + " " + "=".repeat(96) + "\n" + "=".repeat(127) + "\n")
+        			.append("Nome" + " ".repeat(33) + "Horas" + " " + "Extra" + " " + "Salario Bruto" + " " + "Descontos" + " " + "Salario Liquido" + " " + "Metodo\n")
+        			.append("=".repeat(36) + " " + "=".repeat(5) + " " + "=".repeat(5) + " " + "=".repeat(13) + " " + "=".repeat(9) + " " + "=".repeat(15) + " " + "=".repeat(38) + "\n");
+        		}
+        		if(i >= 0 && i < qt_horistas){
+        			folha.append(empregado.getNome()).append(" ".repeat(Math.abs(empregado.getNome().length() - 28)))
+//        			.append(String.format("%.2f",horasNormais)).append(" ".repeat(5))
+            		.append(String.format("%.2f",empregado.getPag_bruto()))
+            		.append(" ".repeat(Math.abs(String.format("%.2f",empregado.getPag_bruto()).length() - 15)))
+            		.append(String.format("%.2f",empregado.getDescontos()))
+            		.append(" ".repeat(Math.abs(String.format("%.2f",empregado.getDescontos()).length() - 13)))
+            		.append(String.format("%.2f",empregado.getPag_liq()))
+            		.append(" ".repeat(Math.abs(String.format("%.2f",empregado.getPag_liq()).length() - 15)));
+        			if(empregado.getMetodoPagamento().equals("banco")) {
+        				folha.append("Banco do Brasil, Ag. " + empregado.getAgencia()).append(" CC " + empregado.getContaCorrente()).append("\n");
+        			}
+        			else {
+        				folha.append(empregado.getMetodoPagamento()).append("\n");
+        			}
+        		}
+        		if(i == qt_horistas-1){
+        			folha.append("\n" + "TOTAL HORISTAS" + " ".repeat(Math.abs(total.length() - 50)))
+        			.append(String.format("%.2f",pg_horistas)).append("\n");
+        		}
+        		i++;
+        	}
+        }
+        for(Empregado empregado: empregados.values()) {
+        	if(empregado.getTipo().equals("comissionado")) {
+        		if(j == 0) {
+        			folha.append("=".repeat(21) + " " + "COMISSIONADO" + " " + "=".repeat(96) + "\n" + "=".repeat(127) + "\n")
+        			.append("Nome" + " ".repeat(33) + "Horas" + " " + "Extra" + " " + "Salario Bruto" + " " + "Descontos" + " " + "Salario Liquido" + " " + "Metodo\n")
+        			.append("=".repeat(36) + " " + "=".repeat(5) + " " + "=".repeat(5) + " " + "=".repeat(13) + " " + "=".repeat(9) + " " + "=".repeat(15) + " " + "=".repeat(38) + "\n");
+        		}
+        		if(j >= 0 && j < qt_com){
+        			folha.append(empregado.getNome()).append(" ".repeat(Math.abs(empregado.getNome().length() - 28)))
+//        			.append(String.format("%.2f",horasNormais)).append(" ".repeat(5))
+            		.append(String.format("%.2f",empregado.getPag_bruto()))
+            		.append(" ".repeat(Math.abs(String.format("%.2f",empregado.getPag_bruto()).length() - 15)))
+            		.append(String.format("%.2f",empregado.getDescontos()))
+            		.append(" ".repeat(Math.abs(String.format("%.2f",empregado.getDescontos()).length() - 13)))
+            		.append(String.format("%.2f",empregado.getPag_liq()))
+            		.append(" ".repeat(Math.abs(String.format("%.2f",empregado.getPag_liq()).length() - 15)));
+        			if(empregado.getMetodoPagamento().equals("banco")) {
+        				folha.append("Banco do Brasil, Ag. " + empregado.getAgencia()).append(" CC " + empregado.getContaCorrente()).append("\n");
+        			}
+        			else {
+        				folha.append(empregado.getMetodoPagamento()).append("\n");
+        			}
+        		}
+        		if(j == qt_com-1){
+        			folha.append("\n" + "TOTAL COMISSIONADOS" + " ".repeat(Math.abs(total.length() - 50)))
+        			.append(String.format("%.2f",pg_com));
+        		}
+        		j++;
+        	}
+        }
+    		
 //        	if(empregado instanceof Comissionado) {
 //        		Comissionado empregado_ = (Comissionado) empregado;
 //        		empregadosData.append(empregado.getId()).append(":")
@@ -91,7 +159,7 @@ public class UtilsFileWriterFolha {
 //                for (Map.Entry<String, String> entry : cartao.entrySet()) {
 //                	cartao_lista.add(entry.getKey() + "-" + entry.getValue());
 //                }
-//                Map<String, String> taxas = empregado.getTaxaServico();
+//                Map<String, String> taxa)s = empregado.getTaxaServico();
 //        		ArrayList<String> taxas_lista = new ArrayList<String>();
 //                for (Map.Entry<String, String> entry : taxas.entrySet()) {
 //                	taxas_lista.add(entry.getKey() + "-" + entry.getValue());
@@ -130,9 +198,8 @@ public class UtilsFileWriterFolha {
 //                .append(empregado.getMetodoPagamento()).append(";");
 //        	}
 //
-        }
-        folha.append("\n" + "=".repeat(80) + "\n").append("TOTAL" + " ".repeat(Math.abs(total.length() - 50)))
-        .append(total);
+//        folha.append("\n" + "TOTAL" + " ".repeat(Math.abs(total.length() - 50)))
+//        .append(total);
         escreverArquivo(saida, folha.toString());
     }	  
 }
