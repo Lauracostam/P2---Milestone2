@@ -1,4 +1,4 @@
-package br.ufal.ic.p2.wepayu.models;
+	package br.ufal.ic.p2.wepayu.models;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +13,7 @@ public class Horista extends Empregado{
 		super(id, nome, endereco, tipo, salario);
 		this.cartao = new HashMap<String, String>();
 	}
+	
 	
 	public double getHorasExtras(String dataInicial, String dataFinal) throws ParseException {
 		double horas = 0;
@@ -47,6 +48,11 @@ public class Horista extends Empregado{
 				}
 			}
 		}
+//		for (Map.Entry<String, Double> entry : horasNormais.entrySet()) {
+//            String id = entry.getKey();
+//            Double h = entry.getValue();
+//            System.out.println("ID: " + id + ", Horas Normais: " + h);
+//        }
 		return horas;
 	}
 	
