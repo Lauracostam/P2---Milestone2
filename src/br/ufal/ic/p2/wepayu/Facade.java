@@ -76,8 +76,11 @@ public class Facade {
     }
     
     public String totalFolha(String data) throws ParseException {
-//    	System.out.println("aa");
-    	return this.sistema.calcularTotalFolha(data);
+    	return this.sistema.calcularTotalFolha(data, false);
+    }
+    
+    public void rodaFolha(String data, String saida) throws ParseException {
+    	this.sistema.rodaFolha(data, saida, true);
     }
     
 	public void zerarSistema() throws IOException {

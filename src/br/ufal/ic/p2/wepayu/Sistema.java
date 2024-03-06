@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import br.ufal.ic.p2.wepayu.Exception.*;
 import br.ufal.ic.p2.wepayu.models.Comissionado;
@@ -15,9 +17,13 @@ import br.ufal.ic.p2.wepayu.models.FolhaDePagamento;
 import br.ufal.ic.p2.wepayu.models.Horista;
 import br.ufal.ic.p2.wepayu.utils.UtilsFileReader;
 import br.ufal.ic.p2.wepayu.utils.UtilsFileWriter;
+import br.ufal.ic.p2.wepayu.utils.UtilsFileWriterFolha;
 
 public class Sistema {
 	private Map<String, Empregado> empregados = new HashMap<String, Empregado>();
+	private Map<String, Empregado> horistas = new HashMap<String,Empregado>();
+	private static Map<String, Double> horasNormais = new HashMap<String, Double>();
+	private static Map<String, Double> horasExtras = new HashMap<String, Double>();
  
 	public Sistema() throws NomeNaoPodeSerNuloException, EnderecoNaoPodeSerNuloException, TipoInvalidoException, TipoNaoAplicavelException, ComissaoNaoPodeSerNulaException, ComissaoDeveSerNaoNegativaException, ComissaoDeveSerNumericaException, SalarioNaoPodeSerNuloException, SalarioDeveSerNaoNegativoException, SalarioDeveSerNumericoException, EmpregadoNaoExisteException, TaxaSindicalDeveSerNumericaException, TaxaSindicalDeveSerNaoNegativaException, MetodoPagamentoInvalidoException, BancoNaoPodeSerNuloException, AgenciaNaoPodeSerNuloException, ContaCorrenteNaoPodeSerNuloException {
 		UtilsFileWriter.criarPasta();
@@ -68,10 +74,23 @@ public class Sistema {
 		}
 		if(tipo.equals("horista")) {
 			if(empregados.size() > 0) {
-				Map.Entry<String,Empregado> lastEntry = null;
-				lastEntry = empregados.entrySet().stream().reduce((first,second) -> second).get();
-				id = lastEntry.getKey();
-				int id_int = Integer.valueOf(id);
+				SortedSet<String> keys = new TreeSet<>(empregados.keySet());
+				// Create a new SortedSet<Integer> to store the converted integers
+		        SortedSet<Integer> integerSet = new TreeSet<>();
+		        // Iterate over the stringSet and parse each string into an integer
+		        for (String str : keys) {
+		            try {
+		                Integer integer = Integer.parseInt(str);
+		                integerSet.add(integer); // Add the parsed integer to the integerSet
+		            } catch (NumberFormatException e) {
+		                // Handle if any string cannot be parsed into an integer
+		                System.err.println("Error parsing string to integer: " + str);
+		            }
+		        }
+				int id_int = 0;		
+				for (Integer key : integerSet) { 
+					id_int = key;
+				}
 				id_int+=1;
 				id = Integer.toString(id_int);
 			}
@@ -80,10 +99,23 @@ public class Sistema {
 		}
 		else if(tipo.equals("assalariado")){
 			if(empregados.size() > 0) {
-				Map.Entry<String,Empregado> lastEntry = null;
-				lastEntry = empregados.entrySet().stream().reduce((first,second) -> second).get();
-				id = lastEntry.getKey();
-				int id_int = Integer.valueOf(id);
+				SortedSet<String> keys = new TreeSet<>(empregados.keySet());
+				// Create a new SortedSet<Integer> to store the converted integers
+		        SortedSet<Integer> integerSet = new TreeSet<>();
+		        // Iterate over the stringSet and parse each string into an integer
+		        for (String str : keys) {
+		            try {
+		                Integer integer = Integer.parseInt(str);
+		                integerSet.add(integer); // Add the parsed integer to the integerSet
+		            } catch (NumberFormatException e) {
+		                // Handle if any string cannot be parsed into an integer
+		                System.err.println("Error parsing string to integer: " + str);
+		            }
+		        }
+				int id_int = 0;		
+				for (Integer key : integerSet) { 
+					id_int = key;
+				}
 				id_int+=1;
 				id = Integer.toString(id_int);
 			}
@@ -126,10 +158,23 @@ public class Sistema {
 		}
 		else if (tipo.equals("comissionado")){
 			if(empregados.size() > 0) {
-				Map.Entry<String,Empregado> lastEntry = null;
-				lastEntry = empregados.entrySet().stream().reduce((first,second) -> second).get();
-				id = lastEntry.getKey();
-				int id_int = Integer.valueOf(id);
+				SortedSet<String> keys = new TreeSet<>(empregados.keySet());
+				// Create a new SortedSet<Integer> to store the converted integers
+		        SortedSet<Integer> integerSet = new TreeSet<>();
+		        // Iterate over the stringSet and parse each string into an integer
+		        for (String str : keys) {
+		            try {
+		                Integer integer = Integer.parseInt(str);
+		                integerSet.add(integer); // Add the parsed integer to the integerSet
+		            } catch (NumberFormatException e) {
+		                // Handle if any string cannot be parsed into an integer
+		                System.err.println("Error parsing string to integer: " + str);
+		            }
+		        }
+				int id_int = 0;		
+				for (Integer key : integerSet) { 
+					id_int = key;
+				}
 				id_int+=1;
 				id = Integer.toString(id_int);
 			}
@@ -308,9 +353,10 @@ public class Sistema {
 			throw new DataInvalidaException();
 		}
 		if(empregados.containsKey(emp_)) {
+			
 			Empregado empregado = empregados.get(emp_);
 			if(empregado instanceof Comissionado) {
-				Comissionado comissionado = (Comissionado)empregado;
+				Comissionado comissionado = (Comissionado) empregado;
 				comissionado.lancaVenda(data, valor);
 			}
 			else {
@@ -350,7 +396,6 @@ public class Sistema {
                         throw new TaxaSindicalNaoPodeSerNulaException();
                     }
                 }
-
 				for (Empregado empregado_existente : empregados.values()) {
 					if(idSindicato.equals(empregado_existente.getIdSindicato())){
 						throw new HaOutroEmpregadoComEsteIDSindicatoException();
@@ -626,21 +671,65 @@ public class Sistema {
 	}
 	
 	
-	public String calcularTotalFolha(String dataPagamento) throws ParseException {
+	public String calcularTotalFolha(String dataPagamento, boolean roda) throws ParseException {
 //		System.out.println(dataPagamento);
         double totalFolha = 0;
         String totalFolhaStr = null;
         for (Empregado empregado : empregados.values()) {
-        	double pagamento = FolhaDePagamento.calcularPagamento(dataPagamento, empregado);
+        	double pagamento = FolhaDePagamento.calcularPagamento(dataPagamento, empregado, roda);
             totalFolha += pagamento;
+//            if(empregado.getTipo().equals("horista")) {
+//            	System.out.println(empregado.getPag_bruto());
+//            }
 //            System.out.println("emp = " + empregado.getNome());
 //            System.out.println("folha" + " " + pagamento);
 //            System.out.println("tipo = " + empregado.getTipo());
         }
+//        System.out.println(dataPagamento);
+//        System.out.println("Pagamento: " + totalFolha);
+//        System.out.println("Horas normais: " + FolhaDePagamento.getTotalHorasNormais());
+//		System.out.println("Horas extras: " + FolhaDePagamento.getTotalHorasExtras());
+//		System.out.println("Horas normais map: " + FolhaDePagamento.getHoristasHorasNormais());
+//		System.out.println("Horas extras map: " + FolhaDePagamento.getHoristasHorasExtras());
+		FolhaDePagamento.setTotalHorasNormais(0);
+		FolhaDePagamento.setTotalHorasExtras(0);
+        
         totalFolhaStr = String.format("%.2f",totalFolha);
         return totalFolhaStr;
     }
 	
+	public void rodaFolha(String data, String saida, boolean roda) throws ParseException {
+		String total = calcularTotalFolha(data, roda);
+		double horasNormais = 0;
+		double horasExtras = 0;
+		double horasTotais = 0;
+		UtilsFileWriterFolha.gerarFolha(empregados, horistas, saida, total, data, horasNormais, horasExtras, horasTotais);
+		horistas.clear();
+	}
+	
+	public Map<String, Empregado> getHoras() {
+		return horistas;
+	}
+
+	public void setHoras(Map<String, Empregado> horistas) {
+		this.horistas = horistas;
+	}
+
+	public static Map<String, Double> getHorasNormais() {
+		return horasNormais;
+	}
+
+	public static void setHorasNormais(Map<String, Double> horasNormais) {
+		Sistema.horasNormais = horasNormais;
+	}
+
+	public static Map<String, Double> getHorasExtras() {
+		return horasExtras;
+	}
+
+	public static void setHorasExtras(Map<String, Double> horasExtras) {
+		Sistema.horasExtras = horasExtras;
+	}
 	
 	
 	
