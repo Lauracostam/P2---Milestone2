@@ -19,11 +19,16 @@ import br.ufal.ic.p2.wepayu.utils.UtilsFileReader;
 import br.ufal.ic.p2.wepayu.utils.UtilsFileWriter;
 import br.ufal.ic.p2.wepayu.utils.UtilsFileWriterFolha;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class Sistema {
 	private Map<String, Empregado> empregados = new HashMap<String, Empregado>();
 	private Map<String, Empregado> horistas = new HashMap<String,Empregado>();
 	private static Map<String, Double> horasNormais = new HashMap<String, Double>();
 	private static Map<String, Double> horasExtras = new HashMap<String, Double>();
+	private static int mes = 0;
  
 	public Sistema() throws NomeNaoPodeSerNuloException, EnderecoNaoPodeSerNuloException, TipoInvalidoException, TipoNaoAplicavelException, ComissaoNaoPodeSerNulaException, ComissaoDeveSerNaoNegativaException, ComissaoDeveSerNumericaException, SalarioNaoPodeSerNuloException, SalarioDeveSerNaoNegativoException, SalarioDeveSerNumericoException, EmpregadoNaoExisteException, TaxaSindicalDeveSerNumericaException, TaxaSindicalDeveSerNaoNegativaException, MetodoPagamentoInvalidoException, BancoNaoPodeSerNuloException, AgenciaNaoPodeSerNuloException, ContaCorrenteNaoPodeSerNuloException {
 		UtilsFileWriter.criarPasta();
@@ -675,6 +680,22 @@ public class Sistema {
 //		System.out.println(dataPagamento);
         double totalFolha = 0;
         String totalFolhaStr = null;
+        SimpleDateFormat sdformat = new SimpleDateFormat("d/M/yyyy");
+		Calendar c = Calendar.getInstance();
+		Date dataPag = sdformat.parse(dataPagamento);
+		
+		
+		
+		c.setTime(dataPag);
+		if (mes != c.get(Calendar.MONTH)+1) {
+			mes = c.get(Calendar.MONTH)+1;
+			Calendar cal = Calendar.getInstance(); 
+			cal.setTime(dataPag);
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			for (Empregado empregado : empregados.values()) {
+				empregado.setUltimoPagamento(sdformat.format(cal.getTime()));
+			}	
+		}
         for (Empregado empregado : empregados.values()) {
         	double pagamento = FolhaDePagamento.calcularPagamento(dataPagamento, empregado, roda);
             totalFolha += pagamento;
@@ -691,8 +712,6 @@ public class Sistema {
 //		System.out.println("Horas extras: " + FolhaDePagamento.getTotalHorasExtras());
 //		System.out.println("Horas normais map: " + FolhaDePagamento.getHoristasHorasNormais());
 //		System.out.println("Horas extras map: " + FolhaDePagamento.getHoristasHorasExtras());
-		FolhaDePagamento.setTotalHorasNormais(0);
-		FolhaDePagamento.setTotalHorasExtras(0);
         
         totalFolhaStr = String.format("%.2f",totalFolha);
         return totalFolhaStr;
@@ -700,10 +719,15 @@ public class Sistema {
 	
 	public void rodaFolha(String data, String saida, boolean roda) throws ParseException {
 		String total = calcularTotalFolha(data, roda);
-		double horasNormais = 0;
-		double horasExtras = 0;
-		double horasTotais = 0;
-		UtilsFileWriterFolha.gerarFolha(empregados, horistas, saida, total, data, horasNormais, horasExtras, horasTotais);
+		double horasNormais = FolhaDePagamento.getTotalHorasNormais();
+		double horasExtras = FolhaDePagamento.getTotalHorasNormais();
+		double horasTotais = horasNormais + horasExtras;
+		UtilsFileWriterFolha.gerarFolha(empregados, horistas, saida, total, data, horasNormais, horasExtras, horasTotais,FolhaDePagamento.getHoristasHorasNormais(),FolhaDePagamento.getHoristasHorasExtras());
+		Map<String, Double> clear_map = new HashMap<String, Double>();
+		FolhaDePagamento.setHoristasHorasNormais(clear_map);
+		FolhaDePagamento.setHoristasHorasExtras(clear_map);
+		FolhaDePagamento.setTotalHorasNormais(0.0);
+		FolhaDePagamento.setTotalHorasExtras(0.0);
 		horistas.clear();
 	}
 	
