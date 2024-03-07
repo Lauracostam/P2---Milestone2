@@ -12,6 +12,9 @@ import java.util.Date;
 public class Comissionado extends Empregado{
 	private double comissao;
 	private Map<String, String> vendas = new HashMap<String, String>();
+	private double pag_fixo = 0;
+	private double pag_vendas = 0;
+	private double total_vendas = 0;
 
 	public Comissionado(String id, String nome, String endereco, String tipo, String salario, String comissao) {
 		super(id, nome, endereco, tipo, salario);
@@ -125,5 +128,29 @@ public class Comissionado extends Empregado{
 		}
 //		System.out.println("venda" + venda);
 		return venda;
+	}
+
+	public double getPag_fixo() {
+		return pag_fixo;
+	}
+
+	public void setPag_fixo(double pag_fixo) {
+		this.pag_fixo = pag_fixo;
+	}
+
+	public double getPag_vendas() {
+		return pag_vendas;
+	}
+
+	public void setPag_vendas(double pag_vendas) {
+		this.pag_vendas = pag_vendas;
+	}
+
+	public double getTotal_vendas() {
+		return total_vendas;
+	}
+
+	public void setTotal_vendas(double total_vendas) {
+		this.total_vendas = total_vendas;
 	} 
 }
