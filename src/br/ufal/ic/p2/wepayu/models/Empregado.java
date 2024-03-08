@@ -37,6 +37,7 @@ public class Empregado {
     private double descontos = 0;
     private double pag_liq = 0;
     private String ultimoPagamento = "1/1/2005";
+    private String ultimoPagamento_Desconto = "1/1/2005";
 
 
     public Empregado(String id, String nome, String endereco, String tipo, String salario){
@@ -381,6 +382,14 @@ public class Empregado {
 
 	public void setUltimoPagamento(String ultimoPagamento) {
 		this.ultimoPagamento = ultimoPagamento;
+	}
+
+	public String getUltimoPagamento_Desconto() {
+		return ultimoPagamento_Desconto;
+	}
+
+	public void setUltimoPagamento_Desconto(String ultimoPagamento_Desconto) {
+		this.ultimoPagamento_Desconto = ultimoPagamento_Desconto;
 	}
 
 }

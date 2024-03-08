@@ -17,6 +17,7 @@ public class FolhaDePagamento extends Empregado{
 	private static double totalHorasExtras = 0;
 	private static Map<String, Double> horistasHorasNormais = new HashMap<String, Double>();
 	private static Map<String, Double> horistasHorasExtras = new HashMap<String, Double>();
+	private static int mes = 0;
 
 	public FolhaDePagamento(String id, String nome, String endereco, String tipo, String salario) {
 		super(id, nome, endereco, tipo, salario);
@@ -26,9 +27,15 @@ public class FolhaDePagamento extends Empregado{
 		double pagamento_deduzido = pagamento;
 		double taxaServico = 0;
 		double descontos = 0;
+		Date firstDate = sdformat.parse(emp.getUltimoPagamento());
+	    Date secondDate = sdformat.parse(dataAtual);
+	    
+	    long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
+	    long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS); 
 		if(c.get(Calendar.DAY_OF_WEEK) == 6) {
-			double deducaoSindicato = vezes_deducao*emp.getTaxaSindical();
+			double deducaoSindicato = (vezes_deducao)*emp.getTaxaSindical();
 			pagamento_deduzido -= deducaoSindicato;
+			descontos = deducaoSindicato;
 			Map<String, String> lancamentos_sind = emp.getTaxaServico();
 			if (lancamentos_sind.size() != 0) {
 				String chave = null;
@@ -67,6 +74,10 @@ public class FolhaDePagamento extends Empregado{
 			if(roda) {
 				emp.setUltimoPagamento(dataAtual);
 			}
+			if(roda && pagamento != 0){
+				emp.setUltimoPagamento_Desconto(dataAtual);
+			}
+			
 		}
 		else {
 			pagamento = 0;
@@ -88,8 +99,9 @@ public class FolhaDePagamento extends Empregado{
 		double taxaServico = 0;
 		double descontos = 0;
 		if(diaAtual == ultimoDiaDoMes) {
-			double deducaoSindicato = Double.valueOf(ultimoDiaDoMes)*emp.getTaxaSindical();
+			double deducaoSindicato = (ultimoDiaDoMes)*emp.getTaxaSindical();
 			pagamento_deduzido -= deducaoSindicato;
+			descontos = deducaoSindicato;
 			Map<String, String> lancamentos_sind = emp.getTaxaServico();
 			String dataInicial = null;
 			String dataFinal = null;
@@ -132,6 +144,9 @@ public class FolhaDePagamento extends Empregado{
 			if(roda){
 				emp.setUltimoPagamento(dataAtual);
 			}
+			if(roda && pagamento != 0){
+				emp.setUltimoPagamento_Desconto(dataAtual);
+			}
 		}
 		else {
 			pagamento = 0;
@@ -159,8 +174,9 @@ public class FolhaDePagamento extends Empregado{
 	    long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 		if(diff >= 8 && c.get(Calendar.DAY_OF_WEEK) == 6) {
 		//if((c.get(Calendar.MONTH)+1 == 1 && c.get(Calendar.DAY_OF_MONTH) == 14 || c.get(Calendar.MONTH)+1 == 1 && c.get(Calendar.DAY_OF_MONTH) == 28) || (c.get(Calendar.MONTH)+1 == 2 && c.get(Calendar.DAY_OF_MONTH) == 11 || c.get(Calendar.MONTH)+1 == 2 && c.get(Calendar.DAY_OF_MONTH) == 25)) {
-			double deducaoSindicato = vezes_deducao*emp.getTaxaSindical();
+			double deducaoSindicato = (vezes_deducao)*emp.getTaxaSindical();
 			pagamento_deduzido -= deducaoSindicato;
+			descontos = deducaoSindicato;
 			Map<String, String> lancamentos_sind = emp.getTaxaServico();
 			if(lancamentos_sind.size() != 0) {
 				String chave = null;
@@ -200,6 +216,9 @@ public class FolhaDePagamento extends Empregado{
 			if(roda){
 				emp.setUltimoPagamento(dataAtual);
 			}
+			if(roda && pagamento != 0){
+				emp.setUltimoPagamento_Desconto(dataAtual);
+			}
 		}
 		else {
 			pagamento = 0;
@@ -225,6 +244,14 @@ public class FolhaDePagamento extends Empregado{
 		Date dataPag = sdformat.parse(dataPagamento);
 		c.setTime(dataPag);
 		//System.out.println(dataPagamento);
+		mes = c.get(Calendar.MONTH)+1;
+		Date firstDate = sdformat.parse(empregado.getUltimoPagamento_Desconto());
+		Date secondDate = sdformat.parse(dataPagamento);
+		long diffInMillies = Math.abs(secondDate.getTime() - firstDate.getTime());
+		long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+		if (c.get(Calendar.MONTH)+1 == 2) {
+			diff -=1;	
+		}
 		
         int diaAtual = c.get(Calendar.DAY_OF_MONTH);
         
@@ -252,25 +279,12 @@ public class FolhaDePagamento extends Empregado{
 						dataFinal = date;
 				}
 				dataInicial = empregado.getUltimoPagamento();
-				//String[] break_str = dataFinal.split("/");
-				//String[] break_str2 = dataInicial.split("/");
-				//if(break_str[1].equals(break_str2[1])){
-					//System.out.println(dataFinal);
-					//System.out.println(dataInicial);
-					
-				//}
-				//System.out.println(dataInicial + " " + dataFinal);
 				Date date_add = sdformat.parse(dataFinal);
 				Date tomorrow = new Date(date_add.getTime() + (1000 * 60 * 60 * 24));
 				String todayAsString = sdformat.format(tomorrow);
 				double horasNormais = horista.getHorasNormais(dataInicial, todayAsString);
 				double horasExtras = horista.getHorasExtras(dataInicial, todayAsString);
 				horasTrabalhadas = horasNormais + horasExtras+1;
-//				System.out.println(empregado.getNome());
-//				System.out.println(empregado.getTipo());
-//				System.out.println(horasNormais);
-//				System.out.println(horasExtras);
-//				System.out.println(horasTrabalhadas);
 				pagamento = 0;
 				pagamento = (horasTrabalhadas)*(horista.getSalario());
 				if(horasTrabalhadas == 1){
@@ -280,7 +294,7 @@ public class FolhaDePagamento extends Empregado{
 				if(pagamento > 0 && horasTrabalhadas == 17) {
 					pagamento += horista.getSalario();
 				}
-				pagamento = calcularSemanal(c, sdformat, horista, Double.valueOf(lancamentos.size()+1), pagamento, dataInicial, dataFinal, dataPagamento, roda);
+				pagamento = calcularSemanal(c, sdformat, horista, diff+1, pagamento, dataInicial, dataFinal, dataPagamento, roda);
 				if(pagamento != 0) {
 					setTotalHorasNormais(horasNormais+getTotalHorasNormais());
 					if(horasExtras != 0) {
@@ -293,7 +307,7 @@ public class FolhaDePagamento extends Empregado{
 				}
 			} else {
 				pagamento = 0;
-				pagamento = calcularSemanal(c, sdformat, horista, Double.valueOf(lancamentos.size()+1), pagamento, dataInicial, dataFinal, dataPagamento, roda);
+				pagamento = calcularSemanal(c, sdformat, horista, diff+1, pagamento, dataInicial, dataFinal, dataPagamento, roda);
 				if(horasTrabalhadas == 1){
 					horasTrabalhadas = 0;
 					pagamento = 0;
@@ -307,7 +321,7 @@ public class FolhaDePagamento extends Empregado{
 			c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
 	        int ultimoDiaDoMes = c.get(Calendar.DAY_OF_MONTH);
 	        pagamento = empregado.getSalario();
-	        pagamento = calcularMensal(c, sdformat, empregado, Double.valueOf(ultimoDiaDoMes), pagamento, diaAtual, ultimoDiaDoMes, dataPagamento, roda);
+	        pagamento = calcularMensal(c, sdformat, empregado, diff+1, pagamento, diaAtual, ultimoDiaDoMes, dataPagamento, roda);
 	        //System.out.println("assalariados: " + pagamento);
 		}
 		else if(empregado.getTipo().equals("comissionado")) {
@@ -350,7 +364,7 @@ public class FolhaDePagamento extends Empregado{
 				temp = (int)(total_comissao*100.0);
 				double total_comissao_short = ((double)temp)/100.0;
 				pagamento = total_comissao_short + (salario_short);
-				pagamento = calcularBiSemanal(c, sdformat, comissionado, Double.valueOf(lancamentos.size()+1), pagamento, dataInicial, dataFinal, dataPagamento, roda);
+				pagamento = calcularBiSemanal(c, sdformat, comissionado, 14, pagamento, dataInicial, dataFinal, dataPagamento, roda);
 				comissionado.setPag_fixo(salario_short);
 				comissionado.setPag_vendas(total_comissao_short);
 				comissionado.setTotal_vendas(vendas);
@@ -360,7 +374,7 @@ public class FolhaDePagamento extends Empregado{
 				int temp = (int)(salario*100.0);
 			    double salario_short = ((double)temp)/100.0;
 			    pagamento = salario_short;
-				pagamento = calcularBiSemanal(c, sdformat, comissionado, Double.valueOf(lancamentos.size()+1), pagamento, dataInicial, dataFinal, dataPagamento, roda);
+				pagamento = calcularBiSemanal(c, sdformat, comissionado, 14, pagamento, dataInicial, dataFinal, dataPagamento, roda);
 				comissionado.setPag_fixo(salario_short);
 			}
 			//System.out.println("comissionados: " + pagamento);
