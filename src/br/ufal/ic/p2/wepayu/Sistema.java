@@ -714,18 +714,25 @@ public class Sistema {
 //		System.out.println("Horas extras map: " + FolhaDePagamento.getHoristasHorasExtras());
         
         totalFolhaStr = String.format("%.2f",totalFolha);
+        if(!roda) {
+        	Map<String, Double> clear_map = new HashMap<String, Double>();
+    		//FolhaDePagamento.setHoristasHorasNormais(clear_map);
+    		//FolhaDePagamento.setHoristasHorasExtras(clear_map);
+    		FolhaDePagamento.setTotalHorasNormais(0.0);
+    		FolhaDePagamento.setTotalHorasExtras(0.0);
+        }
         return totalFolhaStr;
     }
 	
 	public void rodaFolha(String data, String saida, boolean roda) throws ParseException {
 		String total = calcularTotalFolha(data, roda);
 		double horasNormais = FolhaDePagamento.getTotalHorasNormais();
-		double horasExtras = FolhaDePagamento.getTotalHorasNormais();
+		double horasExtras = FolhaDePagamento.getTotalHorasExtras();
 		double horasTotais = horasNormais + horasExtras;
 		UtilsFileWriterFolha.gerarFolha(empregados, horistas, saida, total, data, horasNormais, horasExtras, horasTotais,FolhaDePagamento.getHoristasHorasNormais(),FolhaDePagamento.getHoristasHorasExtras());
 		Map<String, Double> clear_map = new HashMap<String, Double>();
-		FolhaDePagamento.setHoristasHorasNormais(clear_map);
-		FolhaDePagamento.setHoristasHorasExtras(clear_map);
+		//FolhaDePagamento.setHoristasHorasNormais(clear_map);
+		//FolhaDePagamento.setHoristasHorasExtras(clear_map);
 		FolhaDePagamento.setTotalHorasNormais(0.0);
 		FolhaDePagamento.setTotalHorasExtras(0.0);
 		horistas.clear();
